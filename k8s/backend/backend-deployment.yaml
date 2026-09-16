@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: music-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: music-backend
+  template: 
+    metadata:
+      labels:
+        app: music-backend
+    spec:
+      containers:
+        - name: music-backend
+          image: music-backend:1.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: DB_HOST
+
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: DB_NAME
+
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-configmap
+                  key: DB_PORT
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: password
+  

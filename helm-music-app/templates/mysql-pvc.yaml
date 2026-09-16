@@ -1,0 +1,14 @@
+
+#This is a PersistentVolumeClaim (PVC) definition for a MySQL database in a Kubernetes cluster. The PVC requests 1Gi of storage and allows read-write access from a single node. It is created in the "music-app" namespace.
+# permet de conservées les donées si le pod supprime 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+  namespace: {{ .Values.namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.mysql.storage }}

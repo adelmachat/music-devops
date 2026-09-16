@@ -1,0 +1,42 @@
+name: music-app
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: music-mysql
+    environment:
+      MYSQL_DATABASE: hkayet8ram
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: AppSecret123!
+      MYSQL_ROOT_PASSWORD: RootSecret123!
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    image: music-backend:1.0
+    container_name: music-backend
+    environment:
+      DB_HOST: mysql
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: AppSecret123!
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    image: music-frontend:1.0
+    container_name: music-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      backend:
+        condition: service_started
+volumes:
+  mysql-data:
