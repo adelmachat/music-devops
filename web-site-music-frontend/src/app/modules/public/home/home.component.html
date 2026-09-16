@@ -1,0 +1,242 @@
+<!-- Nav -->
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a routerLink="/" class="brand">
+      <span class="brand__mark">H</span>
+      <span>Hkayet 8ram</span>
+      <span class="brand__ar">حكاية غرام</span>
+    </a>
+    <nav class="nav__links">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/spectacles" routerLinkActive="is-active">Spectacles</a>
+      <a routerLink="/podcast" routerLinkActive="is-active">Podcast</a>
+      <a href="#about">About</a>
+    </nav>
+    <a routerLink="/login" class="nav__cta">
+      <span>Admin</span>
+      <span style="font-family: var(--serif); font-style: italic;">→</span>
+    </a>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="hero__staff"></div>
+  <div class="notes-layer" #notesLayer></div>
+
+  <div class="wrap hero__inner">
+    <div class="hero__copy">
+      <div class="hero__eyebrow">
+        <span class="ornament"></span>
+        <span class="eyebrow">Tunis · Concept Musical · Est. 2024</span>
+      </div>
+      <h1>Hkayet<br/><em>8ram.</em></h1>
+      <div class="hero__ar">  حكاية غرام</div>
+      <div class="hero__tagline">Stories of love, told in song</div>
+
+      <div class="hero__cta">
+        <a routerLink="/spectacles" class="btn btn--primary">
+          Explore Spectacles
+          <span style="font-family: var(--serif); font-style: italic;">→</span>
+        </a>
+        <a routerLink="/podcast" class="btn btn--ghost">Listen to Podcast</a>
+      </div>
+
+      <div class="hero__meta">
+        <div><strong>12</strong>Live spectacles</div>
+        <div><strong>34</strong>Podcast episodes</div>
+        <div><strong>3</strong>Cities toured</div>
+      </div>
+    </div>
+
+    <div class="hero__art" aria-hidden="true">
+      <div class="hero__art-mark">♪</div>
+      <div class="hero__art-caption">
+        <small>Featured Spectacle</small>
+        Layali el-Medina · live at Théâtre Municipal, Tunis
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Concept strip -->
+<section class="section" id="about" style="padding-top: 0;">
+  <div class="wrap">
+    <div class="concept">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 20px;">The concept</div>
+        <p class="concept__big">A musical project rooted in <em>Tunisian poetry</em> and the universal language of love — <em>performed live, archived in conversation.</em></p>
+      </div>
+      <div class="concept__pillars">
+        <div class="pillar">
+          <div class="pillar__num">i.</div>
+          <div>
+            <h4>Live spectacles</h4>
+            <p>Intimate concerts blending traditional maqamat with contemporary arrangements, performed in heritage venues across Tunisia.</p>
+          </div>
+        </div>
+        <div class="pillar">
+          <div class="pillar__num">ii.</div>
+          <div>
+            <h4>The podcast</h4>
+            <p>Long-form conversations with poets, composers and performers — exploring the stories behind each song.</p>
+          </div>
+        </div>
+        <div class="pillar">
+          <div class="pillar__num">iii.</div>
+          <div>
+            <h4>The archive</h4>
+            <p>Photo galleries, video reels, and recordings from every performance — preserved as a living cultural record.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Latest spectacles -->
+<section class="section" style="padding-top: 0;" *ngIf="latestSpectacles.length > 0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-head__num">— No. 01</div>
+        <h2>Latest <em>spectacles</em></h2>
+      </div>
+      <div class="sec-head__lead">
+        <a routerLink="/spectacles" class="btn btn--ghost btn--sm">All spectacles →</a>
+        <p>Recent live performances from theatres, courtyards and festivals across Tunisia.</p>
+      </div>
+    </div>
+
+    <div class="spec-grid">
+      <a [routerLink]="['/spectacles', s.id]" class="card" *ngFor="let s of latestSpectacles; let i = index">
+        <div class="spec-card__cover"
+             [ngClass]="!s.afficheUrl ? getCoverClass(i) : ''"
+             [style.backgroundImage]="s.afficheUrl ? 'url(' + s.afficheUrl + ')' : null">
+          <div class="spec-card__cover-overlay" *ngIf="s.afficheUrl"></div>
+          <div class="spec-card__cover-num">— Spectacle</div>
+          <div class="spec-card__cover-title">{{ s.titre }}</div>
+        </div>
+        <div class="spec-card__body">
+          <div class="spec-card__meta">
+            <span>{{ s.date | date:'dd MMM yyyy' }}</span>
+            <span class="dot"></span>
+            <span>{{ s.lieu }}</span>
+          </div>
+          <h3 class="spec-card__title">{{ s.description | slice:0:60 }}{{ (s.description.length || 0) > 60 ? '...' : '' }}</h3>
+          <div class="spec-card__badges">
+            <span class="badge">📷 {{ s.photos.length || 0 }} photos</span>
+            <span class="badge badge--terra">▶ {{ s.reels.length || 0 }} reels</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Staff divider -->
+<div class="wrap">
+  <div class="divider-staff">
+    <span class="divider-staff__mark">𝄞</span>
+  </div>
+</div>
+
+<!-- Latest podcast episodes -->
+<section class="section" style="padding-top: 32px;" *ngIf="latestEpisodes.length > 0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="sec-head__num">— No. 02</div>
+        <h2>Recent <em>episodes</em></h2>
+      </div>
+      <div class="sec-head__lead">
+        <a routerLink="/podcast" class="btn btn--ghost btn--sm">All episodes →</a>
+        <p>Conversations with the artists, poets and producers behind the music.</p>
+      </div>
+    </div>
+
+    <div class="pod-list">
+      <a [routerLink]="['/podcast', e.id]" class="pod-row" *ngFor="let e of latestEpisodes; let i = index">
+        <div class="pod-row__num">{{ e.numero }}</div>
+        <div class="pod-row__thumb"
+             [ngClass]="!e.afficheUrl ? getThumbClass(i) : ''"
+             [style.backgroundImage]="e.afficheUrl ? 'url(' + e.afficheUrl + ')' : null"></div>
+        <div class="pod-row__body">
+          <div class="pod-row__date">{{ e.datePublication | date:'dd MMM yyyy' | uppercase }}</div>
+          <h3>{{ e.titre }}</h3>
+          <p class="pod-row__excerpt">{{ e.description | slice:0:100 }}{{ (e.description.length || 0) > 100 ? '...' : '' }}</p>
+          <div class="pod-row__tags" style="margin-top: 10px;">
+            <span class="badge badge--terra" *ngIf="e.youtubeUrl">YouTube</span>
+            <span class="badge badge--ochre">{{ e.reels.length || 0 }} reels</span>
+          </div>
+        </div>
+        <div class="pod-row__cta">→</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter">
+  <div class="wrap newsletter__inner">
+    <div>
+      <div class="eyebrow" style="color: var(--ochre); margin-bottom: 18px;">— Stay in tune</div>
+      <h2>Be the first to hear of <em>upcoming spectacles.</em></h2>
+      <p>Quarterly letter — new dates, behind-the-scenes notes, and unreleased recordings.</p>
+      <form class="newsletter__form" style="margin-top: 32px; max-width: 460px;" (submit)="$event.preventDefault()">
+        <input type="email" placeholder="your@email.com" />
+        <button class="btn btn--terra btn--sm" type="submit">Subscribe</button>
+      </form>
+    </div>
+    <div class="newsletter__art">♬</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="staff" style="position:absolute; top:30px; left:0; right:0; height: 80px; opacity: 0.4;"></div>
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <div class="brand" style="color: var(--cream); margin-bottom: 16px;">
+          <span class="brand__mark" style="background: var(--ochre); color: var(--ink);">H</span>
+          <span>Hkayet 8ram</span>
+        </div>
+        <p style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ochre); margin: 0 0 12px;">حكايت غرام</p>
+        <p style="font-size: 14px; opacity: 0.75; max-width: 28ch;">A Tunisian musical concept project. Live spectacles, conversations, and an archive of love.</p>
+      </div>
+      <div>
+        <h4>Discover</h4>
+        <ul>
+          <li><a routerLink="/spectacles">All spectacles</a></li>
+          <li><a routerLink="/podcast">All episodes</a></li>
+          <li><a href="#">Tour dates</a></li>
+          <li><a href="#">Archive</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Listen</h4>
+        <ul>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Spotify</a></li>
+          <li><a href="#">Apple Podcasts</a></li>
+          <li><a href="#">SoundCloud</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">hello@hkayet8ram.tn</a></li>
+          <li><a href="#">Press kit</a></li>
+          <li><a href="#">Booking</a></li>
+          <li><a routerLink="/login">Admin login</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Hkayet 8ram. Tunis, Tunisia.</span>
+      <span style="font-family: var(--serif); font-style: italic;">Made with ♪ in la Médina</span>
+    </div>
+  </div>
+</footer>

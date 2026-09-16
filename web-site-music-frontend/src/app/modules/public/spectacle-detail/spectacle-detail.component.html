@@ -1,0 +1,182 @@
+<!-- Nav -->
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a routerLink="/" class="brand">
+      <span class="brand__mark">H</span>
+      <span>Hkayet 8ram</span>
+      <span class="brand__ar">حكايت غرام</span>
+    </a>
+    <nav class="nav__links">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/spectacles" routerLinkActive="is-active">Spectacles</a>
+      <a routerLink="/podcast" routerLinkActive="is-active">Podcast</a>
+    </nav>
+    <a routerLink="/login" class="nav__cta">
+      <span>Admin</span>
+      <span style="font-family: var(--serif); font-style: italic;">→</span>
+    </a>
+  </div>
+</header>
+
+<!-- Loading -->
+<div class="wrap" *ngIf="loading" style="padding: 200px 32px; text-align: center;">
+  <div style="font-family: var(--serif); font-style: italic; font-size: 64px; color: var(--terra); opacity: 0.4;">♪</div>
+</div>
+
+<ng-container *ngIf="!loading && spectacle as s">
+
+  <!-- Hero -->
+  <section class="spec-hero">
+    <div class="wrap spec-hero__inner">
+      <div class="breadcrumb">
+        <a routerLink="/spectacles">← All spectacles</a>
+        <span>/</span>
+        <span>{{ s.titre }}</span>
+      </div>
+      <div>
+        <div class="spec-hero__num">— {{ s.date | date:'dd MMMM yyyy' }}</div>
+        <h1>{{ s.titre }}</h1>
+        <div class="spec-hero__meta">
+          <div class="spec-hero__meta-item">
+            <small>Date</small>
+            <strong>{{ s.date | date:'dd MMMM yyyy' }}</strong>
+          </div>
+          <div class="spec-hero__meta-item">
+            <small>Venue</small>
+            <strong>{{ s.lieu }}</strong>
+          </div>
+          <div class="spec-hero__meta-item">
+            <small>Archive</small>
+            <strong>{{ s.photos.length || 0 }} photos · {{ s.reels.length || 0 }} reels</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Description -->
+  <section class="sec" *ngIf="s.description">
+    <div class="wrap">
+      <div class="desc-grid">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 14px;">— About this spectacle</div>
+          <h2>A night in <em>la Médina.</em></h2>
+          <div style="display: flex; gap: 8px; margin-top: 24px; flex-wrap: wrap;">
+            <span class="badge">Theatre</span>
+            <span class="badge badge--terra">Ensemble</span>
+          </div>
+        </div>
+        <div class="desc-body">
+          <p class="lede">{{ s.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="sec" style="padding-top: 0;" *ngIf="s.photos && s.photos.length > 0">
+    <div class="wrap">
+      <div class="gallery-head">
+        <div>
+          <div class="sec-head__num">— Gallery</div>
+          <h2>{{ s.photos.length }} <em>photographs.</em></h2>
+        </div>
+        <div style="font-size: 13px; color: var(--ink-muted);">click to view</div>
+      </div>
+
+      <div class="gallery">
+        <div class="gallery__item"
+             *ngFor="let photo of s.photos; let i = index"
+             [ngClass]="getGalleryClass(i)"
+             (click)="openLightbox(i)">
+          <img [src]="photo.url" [alt]="photo.legende || 'Photo'" style="width:100%;height:100%;object-fit:cover;">
+          <span class="gallery__item-num">{{ (i + 1).toString().padStart(2, '0') }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap" *ngIf="s.reels && s.reels.length > 0">
+    <div class="divider-staff"><span class="divider-staff__mark">𝄞</span></div>
+  </div>
+
+  <!-- Reels -->
+  <section class="sec" style="padding-top: 32px;" *ngIf="s.reels && s.reels.length > 0">
+    <div class="wrap">
+      <div class="gallery-head">
+        <div>
+          <div class="sec-head__num">— Video reels</div>
+          <h2>{{ s.reels.length }} <em>moments,</em> in motion.</h2>
+        </div>
+        <div style="font-size: 13px; color: var(--ink-muted);">9:16 · captured live</div>
+      </div>
+
+      <div class="reels">
+        <div class="reel" *ngFor="let reel of s.reels; let i = index" [ngClass]="'reel--' + ((i % 4) + 1)">
+          <video *ngIf="reel.url" [src]="reel.url" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;"></video>
+          <div class="reel__play" *ngIf="!reel.url"><span>▶</span></div>
+          <div class="reel__caption">
+            <small>Reel {{ (i + 1).toString().padStart(2, '0') }}</small>
+            {{ reel.titre || 'Clip' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</ng-container>
+
+<!-- Lightbox -->
+<div class="lightbox" [class.is-open]="selectedPhoto !== null" (click)="closePhoto()">
+  <button class="lightbox__close" (click)="closePhoto()">✕</button>
+  <button class="lightbox__nav lightbox__nav--prev" (click)="$event.stopPropagation(); navLightbox(-1)">←</button>
+  <button class="lightbox__nav lightbox__nav--next" (click)="$event.stopPropagation(); navLightbox(1)">→</button>
+  <div class="lightbox__img" (click)="$event.stopPropagation()">
+    <img *ngIf="selectedPhoto" [src]="selectedPhoto" alt="Photo" style="max-width:90vw;max-height:80vh;border-radius:16px;display:block;">
+  </div>
+  <div class="lightbox__caption">
+    Photo {{ lightboxIndex + 1 }} of {{ spectacle?.photos?.length || 0 }}
+    <small>{{ spectacle?.titre }}</small>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <div class="brand" style="color: var(--cream); margin-bottom: 16px;">
+          <span class="brand__mark" style="background: var(--ochre); color: var(--ink);">H</span>
+          <span>Hkayet 8ram</span>
+        </div>
+        <p style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ochre); margin: 0 0 12px;">حكايت غرام</p>
+        <p style="font-size: 14px; opacity: 0.75; max-width: 28ch;">A Tunisian musical concept project.</p>
+      </div>
+      <div>
+        <h4>Discover</h4>
+        <ul>
+          <li><a routerLink="/spectacles">All spectacles</a></li>
+          <li><a routerLink="/podcast">All episodes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Listen</h4>
+        <ul>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Spotify</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">hello@hkayet8ram.tn</a></li>
+          <li><a routerLink="/login">Admin login</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Hkayet 8ram</span>
+      <span style="font-family: var(--serif); font-style: italic;">Made with ♪ in la Médina</span>
+    </div>
+  </div>
+</footer>

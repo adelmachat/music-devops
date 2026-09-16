@@ -1,0 +1,163 @@
+<!-- Nav -->
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a routerLink="/" class="brand">
+      <span class="brand__mark">H</span>
+      <span>Hkayet 8ram</span>
+      <span class="brand__ar">حكايت غرام</span>
+    </a>
+    <nav class="nav__links">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/spectacles" routerLinkActive="is-active">Spectacles</a>
+      <a routerLink="/podcast" routerLinkActive="is-active">Podcast</a>
+    </nav>
+    <a routerLink="/login" class="nav__cta">
+      <span>Admin</span>
+      <span style="font-family: var(--serif); font-style: italic;">→</span>
+    </a>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap page-head__inner">
+    <div>
+      <div class="eyebrow" style="margin-bottom: 22px;">— Section No. 01</div>
+      <h1>Live <em>spectacles.</em></h1>
+      <div class="page-head__count">
+        A collection of <strong>{{ spectacles.length }}</strong> performances since 2024.
+      </div>
+    </div>
+    <div class="page-head__lead">
+      <p>Each spectacle is a self-contained story: a curated set of poetry and song, performed in venues chosen for their resonance — from heritage courtyards to Roman amphitheatres.</p>
+      <a href="#grid" class="btn btn--ghost btn--sm">Browse archive ↓</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="filter-bar">
+      <div class="chip-row">
+        <button class="chip is-active">All</button>
+        <button class="chip">2026</button>
+        <button class="chip">2025</button>
+        <button class="chip">2024</button>
+        <button class="chip">Festival</button>
+        <button class="chip">Theatre</button>
+      </div>
+      <select class="sort-select">
+        <option>Sort: Most recent</option>
+        <option>Sort: Oldest first</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<!-- Loading -->
+<div class="wrap" *ngIf="loading" style="padding: 96px 32px; text-align: center;">
+  <div class="eyebrow" style="color: var(--terra);">Loading spectacles…</div>
+</div>
+
+<!-- Empty -->
+<div class="wrap" *ngIf="!loading && spectacles.length === 0" style="padding: 96px 32px; text-align: center;">
+  <div style="font-family: var(--serif); font-style: italic; font-size: 48px; color: var(--terra); opacity: 0.5;">𝄞</div>
+  <p style="color: var(--ink-muted); margin-top: 16px;">No spectacles yet.</p>
+</div>
+
+<section id="grid" *ngIf="!loading && spectacles.length > 0">
+  <div class="wrap">
+    <div class="spec-grid">
+
+      <ng-container *ngFor="let s of spectacles; let i = index">
+
+        <!-- First item: featured (spans 2 cols) -->
+        <a *ngIf="i === 0" [routerLink]="['/spectacles', s.id]" class="spec-card spec-card--featured">
+          <div class="spec-card__cover"
+               [ngClass]="!s.afficheUrl ? 'cover--1' : ''"
+               [style.backgroundImage]="s.afficheUrl ? 'url(' + s.afficheUrl + ')' : null">
+            <div class="spec-card__cover-overlay" *ngIf="s.afficheUrl"></div>
+            <div class="spec-card__cover-num">— Spectacle {{ spectacles.length - i }}</div>
+            <div class="spec-card__cover-status">Latest</div>
+            <div class="spec-card__cover-title">{{ s.titre }}</div>
+          </div>
+          <div class="spec-card__body">
+            <div class="spec-card__meta">
+              <span>{{ s.date | date:'dd MMM yyyy' }}</span>
+              <span class="dot"></span>
+              <span>{{ s.lieu }}</span>
+            </div>
+            <h3 class="spec-card__title">{{ s.description | slice:0:80 }}{{ s.description.length > 80 ? '.' : '' }}</h3>
+            <div class="spec-card__badges">
+              <span class="badge">📷 {{ s.photos.length || 0 }} photos</span>
+              <span class="badge badge--terra">▶ {{ s.reels.length || 0 }} reels</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Other items: normal card -->
+        <a *ngIf="i > 0" [routerLink]="['/spectacles', s.id]" class="spec-card">
+          <div class="spec-card__cover"
+               [ngClass]="!s.afficheUrl ? 'cover--' + ((i % 6) + 1) : ''"
+               [style.backgroundImage]="s.afficheUrl ? 'url(' + s.afficheUrl + ')' : null">
+            <div class="spec-card__cover-overlay" *ngIf="s.afficheUrl"></div>
+            <div class="spec-card__cover-num">— Spectacle {{ spectacles.length - i }}</div>
+            <div class="spec-card__cover-title">{{ s.titre }}</div>
+          </div>
+          <div class="spec-card__body">
+            <div class="spec-card__meta">
+              <span>{{ s.date | date:'dd MMM yyyy' }}</span>
+              <span class="dot"></span>
+              <span>{{ s.lieu }}</span>
+            </div>
+            <h3 class="spec-card__title">{{ s.description | slice:0:60 }}{{ s.description.length > 60 ? '...' : '' }}</h3>
+            <div class="spec-card__badges">
+              <span class="badge">📷 {{ s.photos.length || 0 }} photos</span>
+              <span class="badge badge--terra">▶ {{ s.reels.length || 0 }} reels</span>
+            </div>
+          </div>
+        </a>
+
+      </ng-container>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <div class="brand" style="color: var(--cream); margin-bottom: 16px;">
+          <span class="brand__mark" style="background: var(--ochre); color: var(--ink);">H</span>
+          <span>Hkayet 8ram</span>
+        </div>
+        <p style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ochre); margin: 0 0 12px;">حكايت غرام</p>
+        <p style="font-size: 14px; opacity: 0.75; max-width: 28ch;">A Tunisian musical concept project.</p>
+      </div>
+      <div>
+        <h4>Discover</h4>
+        <ul>
+          <li><a routerLink="/spectacles">All spectacles</a></li>
+          <li><a routerLink="/podcast">All episodes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Listen</h4>
+        <ul>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Spotify</a></li>
+          <li><a href="#">Apple Podcasts</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">hello@hkayet8ram.tn</a></li>
+          <li><a routerLink="/login">Admin login</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Hkayet 8ram</span>
+      <span style="font-family: var(--serif); font-style: italic;">Made with ♪ in la Médina</span>
+    </div>
+  </div>
+</footer>

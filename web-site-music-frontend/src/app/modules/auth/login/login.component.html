@@ -1,0 +1,67 @@
+<div class="login-bg">
+  <div class="notes-layer" #notesLayer></div>
+
+  <div class="login-shell">
+    <a routerLink="/" class="back-link">← Back to site</a>
+
+    <div class="login-card">
+      <div class="brand-block">
+        <div class="brand-block__mark">H</div>
+        <div class="brand-block__name">Hkayet 8ram</div>
+        <div class="brand-block__ar">حكايت غرام</div>
+        <div class="brand-block__role">Admin · Studio</div>
+        <div class="brand-block__divider">𝄞</div>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-field">
+          <label for="email">Email address</label>
+          <input id="email" type="email" formControlName="email"
+                 placeholder="you@hkayet8ram.tn" autocomplete="email" />
+          <span class="field-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')">
+            Email required
+          </span>
+          <span class="field-error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')">
+            Invalid email
+          </span>
+        </div>
+
+        <div class="form-field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input id="password"
+                   [type]="hidePassword ? 'password' : 'text'"
+                   formControlName="password"
+                   placeholder="••••••••••••"
+                   autocomplete="current-password" />
+            <button type="button" class="toggle-pw" (click)="hidePassword = !hidePassword">
+              {{ hidePassword ? '👁' : '🙈' }}
+            </button>
+          </div>
+          <span class="field-error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')">
+            Password required
+          </span>
+        </div>
+
+        <!-- Server error -->
+        <div class="error-banner" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="login-btn" [disabled]="loginForm.invalid || loading">
+          <span *ngIf="loading">Signing in…</span>
+          <span *ngIf="!loading">
+            Sign in to studio
+            <span style="font-family: var(--serif); font-style: italic;">→</span>
+          </span>
+        </button>
+      </form>
+
+      <div class="login-foot">
+        Need access? <a href="#">Request an invitation</a>
+      </div>
+    </div>
+
+    <p class="login-tagline">— Made with ♪ in la Médina —</p>
+  </div>
+</div>

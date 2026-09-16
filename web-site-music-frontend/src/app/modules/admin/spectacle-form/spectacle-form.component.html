@@ -1,0 +1,187 @@
+<!-- Admin Nav -->
+<header class="admin-nav">
+  <div class="wrap admin-nav__inner">
+    <div class="admin-brand">
+      <span class="brand__mark">H</span>
+      <div>
+        <span class="admin-brand__name">Hkayet 8ram</span>
+        <span class="admin-brand__role"><span class="dot-live"></span>Studio</span>
+      </div>
+    </div>
+    <nav class="admin-nav__links">
+      <a routerLink="/admin">Dashboard</a>
+      <a class="is-active">{{ isEditMode ? 'Edit Spectacle' : 'New Spectacle' }}</a>
+    </nav>
+    <div class="admin-user">
+      <button class="logout-btn" (click)="goBack()">← Dashboard</button>
+    </div>
+  </div>
+</header>
+
+<!-- Form head -->
+<section class="form-head">
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a routerLink="/admin">← Dashboard</a>
+      <span>/</span>
+      <span>Spectacles</span>
+      <span>/</span>
+      <span style="color: var(--ink);">{{ isEditMode ? 'Edit' : 'New entry' }}</span>
+    </div>
+    <div class="form-head__top">
+      <div>
+        <h1>
+          <ng-container *ngIf="isEditMode">Edit <em>spectacle.</em></ng-container>
+          <ng-container *ngIf="!isEditMode">New <em>spectacle.</em></ng-container>
+        </h1>
+        <div class="form-head__sub">{{ isEditMode ? 'Update the spectacle details and media.' : 'Compose a programme. Upload a cover, photos, and reels.' }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Form body -->
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="wrap">
+    <div class="form-grid">
+
+      <!-- LEFT: info -->
+      <div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Programme details</h2>
+            <span class="panel-head__num">— Section 01</span>
+          </div>
+
+          <div class="field">
+            <label>Title <span class="req">*</span></label>
+            <input type="text" formControlName="titre" placeholder="Ex: Layali el-Medina" />
+            <span class="field-error" *ngIf="form.get('titre')?.touched && form.get('titre')?.invalid">Title required</span>
+          </div>
+
+          <div class="field field--row">
+            <div>
+              <label>Date <span class="req">*</span></label>
+              <input type="date" formControlName="date" />
+              <span class="field-error" *ngIf="form.get('date')?.touched && form.get('date')?.invalid">Date required</span>
+            </div>
+            <div>
+              <label>Venue <span class="req">*</span></label>
+              <input type="text" formControlName="lieu" placeholder="Théâtre Municipal · Tunis" />
+              <span class="field-error" *ngIf="form.get('lieu')?.touched && form.get('lieu')?.invalid">Venue required</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Description</label>
+            <textarea formControlName="description" rows="5" placeholder="Describe the spectacle…"></textarea>
+            <div class="field__hint">~ 60 words recommended.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: media -->
+      <div>
+        <!-- Cover -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Cover image</h2>
+            <span class="panel-head__num">— Media 01</span>
+          </div>
+
+          <div class="uploader uploader--cover" (click)="afficheInput.click()" [style.backgroundImage]="affichePreview ? 'url(' + affichePreview + ')' : ''">
+            <ng-container *ngIf="!affichePreview">
+              <span class="uploader__icon">↑</span>
+              <div class="uploader__title">Drop the cover image here</div>
+              <div class="uploader__hint">or <strong>browse files</strong> · JPG/PNG · up to 8 MB</div>
+            </ng-container>
+            <div class="cover-overlay" *ngIf="affichePreview">
+              <span class="uploader__icon">✎</span>
+              <div class="uploader__title">Change image</div>
+            </div>
+            <input #afficheInput type="file" accept="image/*" style="display:none;" (change)="onAfficheSelected($event)" />
+          </div>
+          <div class="field__hint" *ngIf="afficheFile">Selected: {{ afficheFile.name }}</div>
+        </div>
+
+        <!-- Photos -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Photo gallery
+              <span class="panel-count" *ngIf="existingPhotos.length > 0">· {{ existingPhotos.length }} existing</span>
+            </h2>
+            <span class="panel-head__num">— Media 02</span>
+          </div>
+
+          <div class="upload-grid" *ngIf="existingPhotos.length > 0 || photoPreviews.length > 0">
+            <div class="upload-thumb" *ngFor="let p of existingPhotos; let i = index" [ngClass]="'upload-thumb--v' + ((i % 4) + 1)">
+              <img [src]="p.url" [alt]="p.legende" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+            </div>
+            <div class="upload-thumb" *ngFor="let preview of photoPreviews; let i = index" [ngClass]="'upload-thumb--v' + (((existingPhotos.length + i) % 4) + 1)">
+              <img [src]="preview" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+            </div>
+          </div>
+
+          <label class="uploader uploader--mini">
+            <span class="uploader__icon">＋</span>
+            <div class="uploader__title">
+              {{ photoFiles.length > 0 ? 'Add more photos (' + photoFiles.length + ' selected)' : 'Add photographs' }}
+            </div>
+            <div class="uploader__hint">Drop a folder · JPEG/PNG · up to 50 at once</div>
+            <input #photosInput type="file" accept="image/*" multiple style="display:none;" (change)="onPhotosSelected($event)" />
+          </label>
+        </div>
+
+        <!-- Reels -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Video reels
+              <span class="panel-count" *ngIf="existingReels.length > 0">· {{ existingReels.length }} existing</span>
+            </h2>
+            <span class="panel-head__num">— Media 03</span>
+          </div>
+
+          <div class="reels-list" *ngIf="existingReels.length > 0 || reelFiles.length > 0">
+            <div class="reel-row" *ngFor="let r of existingReels; let i = index">
+              <div class="reel-thumb" [ngClass]="'reel-thumb--' + ((i % 4) + 1)">▶</div>
+              <span>{{ r.titre || 'Reel ' + (i + 1) }}</span>
+            </div>
+            <div class="reel-row" *ngFor="let f of reelFiles; let i = index">
+              <div class="reel-thumb" [ngClass]="'reel-thumb--' + (((existingReels.length + i) % 4) + 1)">▶</div>
+              <span>{{ f.name }}</span>
+            </div>
+          </div>
+
+          <label class="uploader uploader--mini">
+            <span class="uploader__icon">▶</span>
+            <div class="uploader__title">
+              {{ reelFiles.length > 0 ? reelFiles.length + ' reel(s) selected' : 'Add a reel' }}
+            </div>
+            <div class="uploader__hint">9:16 MP4 · max 90s · up to 200 MB</div>
+            <input #reelsInput type="file" accept="video/mp4,video/*" multiple style="display:none;" (change)="onReelsSelected($event)" />
+          </label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Save bar -->
+  <div class="save-bar">
+    <div class="wrap save-bar__inner">
+      <div class="save-bar__left">
+        <span style="font-size: 13px; color: var(--ink-muted);">
+          {{ isEditMode ? 'Editing spectacle' : 'New spectacle' }}
+        </span>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn btn--ghost btn--sm" (click)="goBack()">Cancel</button>
+        <button type="submit" class="btn btn--primary btn--sm" [disabled]="form.invalid || loading">
+          <span *ngIf="loading">Saving…</span>
+          <span *ngIf="!loading">{{ isEditMode ? 'Save changes' : 'Publish spectacle' }} →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</form>

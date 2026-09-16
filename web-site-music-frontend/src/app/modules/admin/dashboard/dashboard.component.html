@@ -1,0 +1,161 @@
+<!-- Admin Nav -->
+<header class="admin-nav">
+  <div class="wrap admin-nav__inner">
+    <div class="admin-brand">
+      <span class="brand__mark">H</span>
+      <div>
+        <span class="admin-brand__name">Hkayet 8ram</span>
+        <span class="admin-brand__role">
+          <span class="dot-live"></span>Studio
+        </span>
+      </div>
+    </div>
+    <nav class="admin-nav__links">
+      <a class="is-active">Dashboard</a>
+      <a routerLink="/spectacles" target="_blank">Site public ↗</a>
+    </nav>
+    <div class="admin-user">
+      <a routerLink="/admin/spectacle/new" class="btn btn--primary btn--sm">＋ &nbsp;New spectacle</a>
+      <div class="admin-user__avatar">{{ getInitials() }}</div>
+      <button class="logout-btn" (click)="logout()">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<!-- Page header -->
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-head__top">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 14px;">— Studio · Overview</div>
+        <h1>Welcome back, <em>{{ adminEmail || 'Admin' }}.</em></h1>
+        <div class="page-head__sub">Manage your spectacles and podcast episodes.</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-card__label"><span class="stat-card__icon">♬</span> Total spectacles</div>
+        <div class="stat-card__value">{{ spectacles.length }}</div>
+        <div class="stat-card__delta">Live performances archived</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__label"><span class="stat-card__icon">▶</span> Total episodes</div>
+        <div class="stat-card__value">{{ episodes.length }}</div>
+        <div class="stat-card__delta">Podcast episodes published</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__label"><span class="stat-card__icon">📷</span> Photos archived</div>
+        <div class="stat-card__value">{{ totalPhotos }}</div>
+        <div class="stat-card__delta">Across all spectacles</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__label"><span class="stat-card__icon">🎬</span> Reels archived</div>
+        <div class="stat-card__value">{{ totalReels }}</div>
+        <div class="stat-card__delta">Video clips published</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Content tabs -->
+<section>
+  <div class="wrap">
+    <div class="tabs-bar">
+      <div class="tabs">
+        <button class="tab" [class.is-active]="activeTab === 'spectacles'" (click)="activeTab = 'spectacles'">
+          Spectacles <span class="tab__count">{{ spectacles.length }}</span>
+        </button>
+        <button class="tab" [class.is-active]="activeTab === 'episodes'" (click)="activeTab = 'episodes'">
+          Podcast episodes <span class="tab__count">{{ episodes.length }}</span>
+        </button>
+      </div>
+      <div class="tab-actions">
+        <a *ngIf="activeTab === 'spectacles'" routerLink="/admin/spectacle/new" class="btn btn--terra btn--sm">＋ &nbsp;New spectacle</a>
+        <a *ngIf="activeTab === 'episodes'" routerLink="/admin/episode/new" class="btn btn--terra btn--sm">＋ &nbsp;New episode</a>
+      </div>
+    </div>
+
+    <!-- Spectacles table -->
+    <div class="data-table" *ngIf="activeTab === 'spectacles'">
+      <div class="table-row table-row--head">
+        <span>№</span>
+        <span>Cover</span>
+        <span>Title · venue</span>
+        <span>Date</span>
+        <span>Archive</span>
+        <span style="text-align: right;">Actions</span>
+      </div>
+
+      <div *ngIf="loadingSpectacles" style="padding: 48px; text-align: center; color: var(--ink-muted);">
+        Loading…
+      </div>
+
+      <div *ngIf="!loadingSpectacles && spectacles.length === 0" style="padding: 48px; text-align: center; color: var(--ink-muted);">
+        <div style="font-size: 48px; margin-bottom: 12px;">♪</div>
+        No spectacles yet. <a routerLink="/admin/spectacle/new" style="color: var(--terra-deep);">Add one →</a>
+      </div>
+
+      <ng-container *ngFor="let s of spectacles; let i = index">
+        <div class="table-row">
+          <span class="table-row__num">{{ spectacles.length - i }}</span>
+          <div class="table-thumb" [ngClass]="'thumb--' + ((i % 5) + 1)">
+            <img *ngIf="s.afficheUrl" [src]="s.afficheUrl" [alt]="s.titre" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+          </div>
+          <div>
+            <div class="table-title">{{ s.titre }}<small>{{ s.lieu }}</small></div>
+          </div>
+          <span class="table-cell-muted">{{ s.date | date:'dd MMM yyyy' }}</span>
+          <span class="table-cell-muted">{{ s.photos.length || 0 }} photos · {{ s.reels.length || 0 }} reels</span>
+          <div class="row-actions">
+            <a [routerLink]="['/spectacles', s.id]" class="icon-btn" title="View" target="_blank">↗</a>
+            <a [routerLink]="['/admin/spectacle/edit', s.id]" class="icon-btn" title="Edit">✎</a>
+            <button class="icon-btn icon-btn--danger" title="Delete" (click)="deleteSpectacle(s.id)">⌫</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Episodes table -->
+    <div class="data-table" *ngIf="activeTab === 'episodes'">
+      <div class="table-row table-row--head">
+        <span>Ep.</span>
+        <span>Cover</span>
+        <span>Title</span>
+        <span>Date</span>
+        <span>Reels</span>
+        <span style="text-align: right;">Actions</span>
+      </div>
+
+      <div *ngIf="loadingEpisodes" style="padding: 48px; text-align: center; color: var(--ink-muted);">
+        Loading…
+      </div>
+
+      <div *ngIf="!loadingEpisodes && episodes.length === 0" style="padding: 48px; text-align: center; color: var(--ink-muted);">
+        <div style="font-size: 48px; margin-bottom: 12px;">♪</div>
+        No episodes yet. <a routerLink="/admin/episode/new" style="color: var(--terra-deep);">Add one →</a>
+      </div>
+
+      <ng-container *ngFor="let e of episodes; let i = index">
+        <div class="table-row">
+          <span class="table-row__num">{{ e.numero }}</span>
+          <div class="table-thumb" [ngClass]="'thumb--' + ((i % 5) + 1)">
+            <img *ngIf="e.afficheUrl" [src]="e.afficheUrl" [alt]="e.titre" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">
+          </div>
+          <div>
+            <div class="table-title">{{ e.titre }}</div>
+          </div>
+          <span class="table-cell-muted">{{ e.datePublication | date:'dd MMM yyyy' }}</span>
+          <span class="table-cell-muted">{{ e.reels.length || 0 }} reels</span>
+          <div class="row-actions">
+            <a [routerLink]="['/podcast', e.id]" class="icon-btn" title="View" target="_blank">↗</a>
+            <a [routerLink]="['/admin/episode/edit', e.id]" class="icon-btn" title="Edit">✎</a>
+            <button class="icon-btn icon-btn--danger" title="Delete" (click)="deleteEpisode(e.id)">⌫</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+  </div>
+</section>

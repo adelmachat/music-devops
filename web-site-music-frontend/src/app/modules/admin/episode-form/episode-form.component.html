@@ -1,0 +1,164 @@
+<!-- Admin Nav -->
+<header class="admin-nav">
+  <div class="wrap admin-nav__inner">
+    <div class="admin-brand">
+      <span class="brand__mark">H</span>
+      <div>
+        <span class="admin-brand__name">Hkayet 8ram</span>
+        <span class="admin-brand__role"><span class="dot-live"></span>Studio</span>
+      </div>
+    </div>
+    <nav class="admin-nav__links">
+      <a routerLink="/admin">Dashboard</a>
+      <a class="is-active">{{ isEditMode ? 'Edit Episode' : 'New Episode' }}</a>
+    </nav>
+    <div class="admin-user">
+      <button class="logout-btn" (click)="goBack()">← Dashboard</button>
+    </div>
+  </div>
+</header>
+
+<!-- Form head -->
+<section class="form-head">
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a routerLink="/admin">← Dashboard</a>
+      <span>/</span>
+      <span>Podcast</span>
+      <span>/</span>
+      <span style="color: var(--ink);">{{ isEditMode ? 'Edit' : 'New entry' }}</span>
+    </div>
+    <div class="form-head__top">
+      <div>
+        <h1>
+          <ng-container *ngIf="isEditMode">Edit <em>episode.</em></ng-container>
+          <ng-container *ngIf="!isEditMode">New <em>episode.</em></ng-container>
+        </h1>
+        <div class="form-head__sub">{{ isEditMode ? 'Update the episode details and media.' : 'Add a podcast episode with YouTube link and reels.' }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Form body -->
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="wrap">
+    <div class="form-grid">
+
+      <!-- LEFT: info -->
+      <div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Episode details</h2>
+            <span class="panel-head__num">— Section 01</span>
+          </div>
+
+          <div class="field field--row">
+            <div>
+              <label>Episode No. <span class="req">*</span></label>
+              <input type="number" formControlName="numero" placeholder="34" />
+              <span class="field-error" *ngIf="form.get('numero')?.touched && form.get('numero')?.invalid">Required</span>
+            </div>
+            <div>
+              <label>Publication date</label>
+              <input type="date" formControlName="datePublication" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Title <span class="req">*</span></label>
+            <input type="text" formControlName="titre" placeholder="Ex: The poetry of Chebbi, in melody" />
+            <span class="field-error" *ngIf="form.get('titre')?.touched && form.get('titre')?.invalid">Title required</span>
+          </div>
+
+          <div class="field">
+            <label>YouTube URL <span class="req">*</span></label>
+            <input type="url" formControlName="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." />
+            <div class="field__hint">Paste the full YouTube watch URL.</div>
+            <span class="field-error" *ngIf="form.get('youtubeUrl')?.touched && form.get('youtubeUrl')?.invalid">YouTube URL required</span>
+          </div>
+
+          <div class="field">
+            <label>Description / Show notes</label>
+            <textarea formControlName="description" rows="6" placeholder="Describe the episode, the guest, and what you'll discuss…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: media -->
+      <div>
+        <!-- Affiche -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Episode cover</h2>
+            <span class="panel-head__num">— Media 01</span>
+          </div>
+
+          <div class="uploader uploader--cover" (click)="afficheInput.click()" [style.backgroundImage]="affichePreview ? 'url(' + affichePreview + ')' : ''">
+            <ng-container *ngIf="!affichePreview">
+              <span class="uploader__icon">↑</span>
+              <div class="uploader__title">Drop the cover image here</div>
+              <div class="uploader__hint">or <strong>browse files</strong> · JPG/PNG · up to 8 MB</div>
+            </ng-container>
+            <div class="cover-overlay" *ngIf="affichePreview">
+              <span class="uploader__icon">✎</span>
+              <div class="uploader__title">Change image</div>
+            </div>
+            <input #afficheInput type="file" accept="image/*" style="display:none;" (change)="onAfficheSelected($event)" />
+          </div>
+          <div class="field__hint" *ngIf="afficheFile">Selected: {{ afficheFile.name }}</div>
+        </div>
+
+        <!-- Reels -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Video reels
+              <span class="panel-count" *ngIf="existingReels.length > 0">· {{ existingReels.length }} existing</span>
+            </h2>
+            <span class="panel-head__num">— Media 02</span>
+          </div>
+
+          <div class="reels-list" *ngIf="existingReels.length > 0 || reelFiles.length > 0">
+            <div class="reel-row" *ngFor="let r of existingReels; let i = index">
+              <div class="reel-thumb" [ngClass]="'reel-thumb--' + ((i % 3) + 1)">▶</div>
+              <span>{{ r.titre || 'Reel ' + (i + 1) }}</span>
+            </div>
+            <div class="reel-row" *ngFor="let f of reelFiles; let i = index">
+              <div class="reel-thumb" [ngClass]="'reel-thumb--' + (((existingReels.length + i) % 3) + 1)">▶</div>
+              <span>{{ f.name }}</span>
+            </div>
+          </div>
+
+          <label class="uploader uploader--mini">
+            <span class="uploader__icon">▶</span>
+            <div class="uploader__title">
+              {{ reelFiles.length > 0 ? 'Add more reels (' + reelFiles.length + ' selected)' : 'Add reels' }}
+            </div>
+            <div class="uploader__hint">9:16 MP4 · max 90s · up to 200 MB</div>
+            <input #reelsInput type="file" accept="video/mp4,video/*" multiple style="display:none;" (change)="onReelsSelected($event)" />
+          </label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Save bar -->
+  <div class="save-bar">
+    <div class="wrap save-bar__inner">
+      <div class="save-bar__left">
+        <span style="font-size: 13px; color: var(--ink-muted);">
+          {{ isEditMode ? 'Editing episode' : 'New episode' }}
+        </span>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button type="button" class="btn btn--ghost btn--sm" (click)="goBack()">Cancel</button>
+        <button type="submit" class="btn btn--primary btn--sm" [disabled]="form.invalid || loading">
+          <span *ngIf="loading">Saving…</span>
+          <span *ngIf="!loading">{{ isEditMode ? 'Save changes' : 'Publish episode' }} →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</form>

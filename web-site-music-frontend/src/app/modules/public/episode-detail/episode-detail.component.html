@@ -1,0 +1,170 @@
+<!-- Nav -->
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a routerLink="/" class="brand">
+      <span class="brand__mark">H</span>
+      <span>Hkayet 8ram</span>
+      <span class="brand__ar">حكايت غرام</span>
+    </a>
+    <nav class="nav__links">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/spectacles" routerLinkActive="is-active">Spectacles</a>
+      <a routerLink="/podcast" routerLinkActive="is-active">Podcast</a>
+    </nav>
+    <a routerLink="/login" class="nav__cta">
+      <span>Admin</span>
+      <span style="font-family: var(--serif); font-style: italic;">→</span>
+    </a>
+  </div>
+</header>
+
+<!-- Loading -->
+<div class="wrap" *ngIf="loading" style="padding: 200px 32px; text-align: center;">
+  <div style="font-family: var(--serif); font-style: italic; font-size: 64px; color: var(--terra); opacity: 0.4;">♪</div>
+</div>
+
+<ng-container *ngIf="!loading && episode as e">
+
+  <!-- Hero -->
+  <section class="ep-hero">
+    <div class="wrap ep-hero__inner">
+      <div class="breadcrumb">
+        <a routerLink="/podcast">← All episodes</a>
+        <span>/</span>
+        <span>Episode {{ e.numero }}</span>
+      </div>
+
+      <div class="ep-hero__layout">
+        <div>
+          <div class="ep-num-badge">— Episode <strong>{{ e.numero }}</strong></div>
+          <h1>{{ e.titre }}</h1>
+          <p class="ep-hero__sub">{{ e.description | slice:0:160 }}{{ e.description.length > 160 ? '...' : '' }}</p>
+        </div>
+
+        <!-- YouTube embed or placeholder -->
+        <div>
+          <div class="player-wrap" *ngIf="safeYoutubeUrl">
+            <iframe [src]="safeYoutubeUrl" frameborder="0" allowfullscreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              style="position:absolute;inset:0;width:100%;height:100%;z-index:2;">
+            </iframe>
+          </div>
+          <div class="player-wrap" *ngIf="!safeYoutubeUrl">
+            <div class="player-content">
+              <div class="player-play">▶</div>
+              <div class="player-title">Hkayet 8ram · Episode {{ e.numero }}</div>
+              <div class="player-channel">Episode not yet on YouTube</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ep-hero__meta">
+        <div class="ep-hero__meta-item">
+          <small>Released</small>
+          <strong>{{ e.datePublication | date:'dd MMMM yyyy' }}</strong>
+        </div>
+        <div class="ep-hero__meta-item">
+          <small>Listen on</small>
+          <strong>YouTube · Spotify · Apple</strong>
+        </div>
+        <div class="ep-hero__meta-item" *ngIf="e.reels?.length">
+          <small>Reels</small>
+          <strong>{{ e.reels.length }} clips</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Description body -->
+  <section>
+    <div class="wrap">
+      <div class="body-grid">
+        <aside class="body-aside">
+          <h3>— About</h3>
+          <p style="font-size: 14px; color: var(--ink-muted); line-height: 1.65;">{{ e.description }}</p>
+
+          <h3 style="margin-top: 40px;">— Links</h3>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+            <li *ngIf="e.youtubeUrl">
+              <a [href]="e.youtubeUrl" target="_blank" style="color: var(--terra-deep); border-bottom: 1px solid var(--line);">→ Watch on YouTube</a>
+            </li>
+            <li><a routerLink="/podcast" style="color: var(--terra-deep); border-bottom: 1px solid var(--line);">→ All episodes</a></li>
+          </ul>
+        </aside>
+
+        <div class="body-content">
+          <div class="eyebrow" style="margin-bottom: 16px;">— Show notes</div>
+          <h2>Episode <em>{{ e.numero }}</em></h2>
+          <p class="lede">{{ e.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reels -->
+  <section class="reels-sec" *ngIf="e.reels && e.reels.length > 0">
+    <div class="wrap">
+      <div class="reels-head">
+        <div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--terra-deep); margin-bottom: 8px;">— Clips & reels</div>
+          <h2>{{ e.reels.length }} <em>highlights</em> from this episode.</h2>
+        </div>
+        <div style="font-size: 13px; color: var(--ink-muted);">9:16 · subtitled</div>
+      </div>
+
+      <div class="reels">
+        <div class="reel" *ngFor="let reel of e.reels; let i = index" [ngClass]="'reel--' + ((i % 3) + 1)">
+          <video *ngIf="reel.url" [src]="reel.url" controls preload="metadata" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;"></video>
+          <div class="reel__play" *ngIf="!reel.url"><span>▶</span></div>
+          <div class="reel__caption">
+            <small>Reel {{ (i + 1).toString().padStart(2, '0') }}</small>
+            {{ reel.titre || 'Clip' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</ng-container>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <div class="brand" style="color: var(--cream); margin-bottom: 16px;">
+          <span class="brand__mark" style="background: var(--ochre); color: var(--ink);">H</span>
+          <span>Hkayet 8ram</span>
+        </div>
+        <p style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ochre); margin: 0 0 12px;">حكايت غرام</p>
+        <p style="font-size: 14px; opacity: 0.75; max-width: 28ch;">A Tunisian musical concept project.</p>
+      </div>
+      <div>
+        <h4>Discover</h4>
+        <ul>
+          <li><a routerLink="/spectacles">All spectacles</a></li>
+          <li><a routerLink="/podcast">All episodes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Listen</h4>
+        <ul>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Spotify</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">hello@hkayet8ram.tn</a></li>
+          <li><a routerLink="/login">Admin login</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Hkayet 8ram</span>
+      <span style="font-family: var(--serif); font-style: italic;">Made with ♪ in la Médina</span>
+    </div>
+  </div>
+</footer>

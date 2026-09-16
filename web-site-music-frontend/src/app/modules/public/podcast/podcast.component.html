@@ -1,0 +1,164 @@
+<!-- Nav -->
+<header class="nav">
+  <div class="wrap nav__inner">
+    <a routerLink="/" class="brand">
+      <span class="brand__mark">H</span>
+      <span>Hkayet 8ram</span>
+      <span class="brand__ar">حكايت غرام</span>
+    </a>
+    <nav class="nav__links">
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/spectacles" routerLinkActive="is-active">Spectacles</a>
+      <a routerLink="/podcast" routerLinkActive="is-active">Podcast</a>
+    </nav>
+    <a routerLink="/login" class="nav__cta">
+      <span>Admin</span>
+      <span style="font-family: var(--serif); font-style: italic;">→</span>
+    </a>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap page-head__inner">
+    <div>
+      <div class="eyebrow" style="margin-bottom: 22px;">— Section No. 02</div>
+      <h1>The <em>podcast.</em></h1>
+      <div class="page-head__count">
+        {{ episodes.length }} episodes — conversations on poetry, performance and the craft of song.
+      </div>
+    </div>
+    <div class="page-head__lead">
+      <p>Long-form conversations with poets, composers and performers — exploring the stories behind each song.</p>
+      <div class="platform-row">
+        <a href="#" class="platform-pill"><span class="platform-pill__dot platform-pill__dot--yt"></span> YouTube</a>
+        <a href="#" class="platform-pill"><span class="platform-pill__dot platform-pill__dot--sp"></span> Spotify</a>
+        <a href="#" class="platform-pill"><span class="platform-pill__dot platform-pill__dot--ap"></span> Apple</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured episode (first from API) -->
+  <div class="wrap" *ngIf="!loading && episodes.length > 0">
+    <article class="featured-ep">
+      <div class="featured-ep__art"
+           [style.backgroundImage]="episodes[0].afficheUrl ? 'url(' + episodes[0].afficheUrl + ')' : null">
+        <div class="featured-ep__art-num">— Episode {{ episodes[0].numero }} · Latest</div>
+        <div class="featured-ep__art-mark" *ngIf="!episodes[0].afficheUrl">♪</div>
+      </div>
+      <div class="featured-ep__body">
+        <div class="featured-ep__eyebrow">— Latest episode</div>
+        <h2>{{ episodes[0].titre }}</h2>
+        <p class="featured-ep__excerpt">{{ episodes[0].description | slice:0:160 }}{{ episodes[0].description.length > 160 ? '...' : '' }}</p>
+        <div class="featured-ep__meta">
+          <div class="featured-ep__meta-item">
+            <small>Released</small>
+            <strong>{{ episodes[0].datePublication | date:'dd MMMM yyyy' }}</strong>
+          </div>
+          <div class="featured-ep__meta-item">
+            <small>Format</small>
+            <strong>Video{{ episodes[0].reels.length ? ' + ' + episodes[0].reels.length + ' reels' : '' }}</strong>
+          </div>
+        </div>
+        <div class="featured-ep__cta">
+          <a [routerLink]="['/podcast', episodes[0].id]" class="btn btn--primary">▶ &nbsp;Watch episode</a>
+          <a *ngIf="episodes[0].youtubeUrl" [href]="episodes[0].youtubeUrl" target="_blank" class="btn btn--ghost">Listen on YouTube</a>
+        </div>
+      </div>
+    </article>
+
+    <div class="filter-bar">
+      <div class="chip-row">
+        <button class="chip is-active">All</button>
+        <button class="chip">2026</button>
+        <button class="chip">2025</button>
+        <button class="chip">2024</button>
+      </div>
+      <span style="font-size: 13px; color: var(--ink-muted);">{{ episodes.length }} episodes</span>
+    </div>
+  </div>
+</section>
+
+<!-- Loading -->
+<div class="wrap" *ngIf="loading" style="padding: 96px 32px; text-align: center;">
+  <div class="eyebrow" style="color: var(--terra);">Loading episodes…</div>
+</div>
+
+<!-- Empty -->
+<div class="wrap" *ngIf="!loading && episodes.length === 0" style="padding: 96px 32px; text-align: center;">
+  <div style="font-family: var(--serif); font-style: italic; font-size: 48px; color: var(--terra); opacity: 0.5;">♪</div>
+  <p style="color: var(--ink-muted); margin-top: 16px;">No episodes yet.</p>
+</div>
+
+<!-- Episode list (skip first, already featured above) -->
+<section *ngIf="!loading && episodes.length > 1">
+  <div class="wrap">
+    <div class="ep-list">
+
+      <a [routerLink]="['/podcast', e.id]" class="ep-row" *ngFor="let e of episodes | slice:1; let i = index">
+        <div class="ep-row__num">{{ e.numero }}</div>
+        <div class="ep-row__thumb"
+             [ngClass]="!e.afficheUrl ? getThumbClass(i) : ''"
+             [style.backgroundImage]="e.afficheUrl ? 'url(' + e.afficheUrl + ')' : null">
+          <div class="ep-row__thumb-mark" *ngIf="!e.afficheUrl">{{ getNoteMark(i) }}</div>
+        </div>
+        <div>
+          <div class="ep-row__date">{{ e.datePublication | date:'dd MMM yyyy' | uppercase }}</div>
+          <h3 class="ep-row__title">{{ e.titre }}</h3>
+          <p class="ep-row__excerpt">{{ e.description | slice:0:120 }}{{ e.description.length > 120 ? '...' : '' }}</p>
+          <div class="ep-row__tags">
+            <span class="ep-row__tag ep-row__tag--yt" *ngIf="e.youtubeUrl">
+              <span class="dot" style="background: #FF0000;"></span>YouTube
+            </span>
+            <span class="ep-row__tag" *ngIf="e.reels?.length">▶ {{ e.reels.length }} reels</span>
+          </div>
+        </div>
+        <div class="ep-row__cta">
+          <span class="ep-row__play">▶</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <div class="brand" style="color: var(--cream); margin-bottom: 16px;">
+          <span class="brand__mark" style="background: var(--ochre); color: var(--ink);">H</span>
+          <span>Hkayet 8ram</span>
+        </div>
+        <p style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ochre); margin: 0 0 12px;">حكايت غرام</p>
+        <p style="font-size: 14px; opacity: 0.75; max-width: 28ch;">A Tunisian musical concept project.</p>
+      </div>
+      <div>
+        <h4>Discover</h4>
+        <ul>
+          <li><a routerLink="/spectacles">All spectacles</a></li>
+          <li><a routerLink="/podcast">All episodes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Listen</h4>
+        <ul>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Spotify</a></li>
+          <li><a href="#">Apple Podcasts</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">hello@hkayet8ram.tn</a></li>
+          <li><a routerLink="/login">Admin login</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Hkayet 8ram</span>
+      <span style="font-family: var(--serif); font-style: italic;">Made with ♪ in la Médina</span>
+    </div>
+  </div>
+</footer>

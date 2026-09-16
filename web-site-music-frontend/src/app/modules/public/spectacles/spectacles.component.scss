@@ -1,0 +1,69 @@
+.page-head {
+  padding: 80px 0 56px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 60% 50% at 90% 0%, rgba(232,199,126,0.3), transparent 60%),
+    var(--cream);
+}
+.page-head__inner {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 64px;
+  align-items: end;
+}
+.page-head h1 { font-size: clamp(56px, 8vw, 104px); line-height: 0.96; font-weight: 500; letter-spacing: -0.02em; }
+.page-head h1 em { font-style: italic; color: var(--terra-deep); font-weight: 400; }
+.page-head__count { font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-muted); margin-top: 18px; }
+.page-head__count strong { color: var(--terra-deep); font-weight: 500; }
+.page-head__lead p { color: var(--ink-soft); font-size: 16px; line-height: 1.6; margin: 0 0 24px; }
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+.chip-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { font-size: 13px; padding: 8px 16px; border-radius: var(--r-pill); border: 1px solid var(--line-strong); color: var(--ink-soft); cursor: pointer; transition: all .2s; background: transparent; font-family: var(--sans); }
+.chip:hover { border-color: var(--ink); }
+.chip.is-active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+.sort-select { font-size: 13px; padding: 8px 16px; border-radius: var(--r-pill); border: 1px solid var(--line-strong); background: transparent; color: var(--ink-soft); font-family: var(--sans); cursor: pointer; }
+
+.spec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding: 64px 0 96px; }
+.spec-card {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  background: #fff;
+  transition: all .3s ease;
+}
+.spec-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--line-strong); }
+.spec-card__cover { aspect-ratio: 4 / 3; position: relative; overflow: hidden; background-size: cover; background-position: center; }
+.spec-card__cover::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(90deg, rgba(255,248,236,0.07) 0 1px, transparent 1px 20px); z-index: 1; }
+.spec-card__cover-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 50%, transparent 100%); z-index: 1; }
+.spec-card__cover-num { position: absolute; top: 18px; left: 22px; font-family: var(--serif); font-style: italic; color: var(--cream); font-size: 14px; letter-spacing: 0.04em; z-index: 2; }
+.spec-card__cover-status { position: absolute; top: 18px; right: 22px; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cream); padding: 4px 10px; border-radius: var(--r-pill); background: rgba(255,248,236,0.18); backdrop-filter: blur(4px); border: 1px solid rgba(255,248,236,0.25); z-index: 2; }
+.spec-card__cover-title { position: absolute; bottom: 22px; left: 22px; right: 22px; color: var(--cream); font-family: var(--serif); font-size: 28px; line-height: 1.1; z-index: 2; }
+.spec-card__body { padding: 24px 26px 28px; }
+.spec-card__meta { font-size: 12px; color: var(--ink-muted); display: flex; gap: 12px; align-items: center; margin-bottom: 14px; letter-spacing: 0.04em; }
+.spec-card__meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-muted); }
+.spec-card__title { font-family: var(--serif); font-size: 22px; line-height: 1.25; margin-bottom: 18px; }
+.spec-card__badges { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.spec-card--featured { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; }
+.spec-card--featured .spec-card__cover { aspect-ratio: auto; }
+.spec-card--featured .spec-card__body { padding: 40px 36px; display: flex; flex-direction: column; justify-content: center; }
+.spec-card--featured .spec-card__title { font-size: 32px; }
+
+@media (max-width: 1000px) {
+  .spec-grid { grid-template-columns: 1fr; }
+  .spec-card--featured { grid-column: auto; grid-template-columns: 1fr; }
+  .page-head__inner { grid-template-columns: 1fr; }
+}
