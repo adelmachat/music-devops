@@ -24,6 +24,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: set up java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cahe: maven
+
+
+
+
       - name: Build and push backend
         uses: docker/build-push-action@v6
         with:
