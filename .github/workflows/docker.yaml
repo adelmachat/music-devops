@@ -30,7 +30,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
+      - name: Build Spring Boot App with Maven
+        run: |
+          cd web-site-music-backend
+          chmod +x mvnw
+          ./mvnw clean package -DskipTests
 
+          
       - name: Lowercase Repository Owner
         id: prep
         run: echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
