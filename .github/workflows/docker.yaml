@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 jobs:
-  build-and-push docker image:
+  docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +36,7 @@ jobs:
           chmod +x mvnw
           ./mvnw clean package -DskipTests
 
-
+          
       - name: Lowercase Repository Owner
         id: prep
         run: echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
