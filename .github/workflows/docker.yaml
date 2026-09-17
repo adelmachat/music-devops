@@ -30,7 +30,7 @@ jobs:
           context: ./web-site-music-backend
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/music-backend:latest
+            ghcr.io/${{ github.repository_owner }}/music-backend:1.1
             ghcr.io/${{ github.repository_owner }}/music-backend:${{ github.sha }}
 
       - name: build and push frontend
@@ -39,5 +39,5 @@ jobs:
           context: ./web-site-music-frontend
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/music-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/music-frontend:1.1
             ghcr.io/${{ github.repository_owner }}/music-frontend:${{ github.sha }}
