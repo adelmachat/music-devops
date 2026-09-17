@@ -1,0 +1,43 @@
+name : build and push docker image
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout source code 
+        uses: actions/checkout@v4
+
+      - name: Log in to DockerHub GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./web-site-music-backend
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/music-backend:latest
+            ghcr.io/${{ github.repository_owner }}/music-backend:${{ github.sha }}
+
+      - name: build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./web-site-music-frontend
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/music-frontend:latest
+            ghcr.io/${{ github.repository_owner }}/music-frontend:${{ github.sha }}
