@@ -1,4 +1,4 @@
-name : build and push docker image
+name: build and push docker image
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout source code 
+      - name: checkout source code
         uses: actions/checkout@v4
 
       - name: Log in to DockerHub GHCR
@@ -29,10 +29,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cahe: maven
+          cache: 'maven'
 
-
-
+      - name: Lowercase Repository Owner
+        id: prep
+        run: echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
       - name: Build and push backend
         uses: docker/build-push-action@v6
@@ -40,8 +41,8 @@ jobs:
           context: ./web-site-music-backend
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/music-backend:latest
-            ghcr.io/${{ github.repository_owner }}/music-backend:${{ github.sha }}
+            ghcr.io/${{ steps.prep.outputs.owner }}/music-backend:latest
+            ghcr.io/${{ steps.prep.outputs.owner }}/music-backend:${{ github.sha }}
 
       - name: build and push frontend
         uses: docker/build-push-action@v6
@@ -49,5 +50,5 @@ jobs:
           context: ./web-site-music-frontend
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/music-frontend:latest
-            ghcr.io/${{ github.repository_owner }}/music-frontend:${{ github.sha }}
+            ghcr.io/${{ steps.prep.outputs.owner }}/music-frontend:latest
+            ghcr.io/${{ steps.prep.outputs.owner }}/music-frontend:${{ github.sha }}
